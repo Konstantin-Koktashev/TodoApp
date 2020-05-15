@@ -6,5 +6,11 @@ export const todoApi={
     },
     getTodoByID(todoId){
       return axios.get(`${baseUrl}/${todoId}`)
+    },
+    addTodo(todoTitle){
+      return axios.post(baseUrl,{title:todoTitle})
+    },
+    removeTodo(todoId){
+      return axios.delete(`${baseUrl}/${todoId}`)
     }
 }

@@ -3,7 +3,7 @@ import { todoApi } from '../todoApi/todoApi'
 import { v4 as uuid } from 'uuid';
 
 export const query = createAsyncThunk(
-    '/api/toys',
+    '/api/todos',
     async (criteria, { getState, requestId }) => {
       const { currentRequestId, loading } = getState().todos
       if (loading !== 'pending' || requestId !== currentRequestId) {
@@ -14,6 +14,21 @@ export const query = createAsyncThunk(
       return response.data
     }
   )
+export const addNewTodo = createAsyncThunk(
+    '/api/todos/addTodo',
+    async (todoTitle) => {
+      const response = await todoApi.addTodo(todoTitle)
+      return response.data
+    }
+  )
+export const removeSelectedTodo = createAsyncThunk(
+    '/api/todos/removeTodo',
+    async (todoId) => {
+   await todoApi.removeTodo(todoId)
+
+    }
+  )
+
   export const getTodoById=createAsyncThunk(
     '/api/todos/id',
     async(id)=>{
@@ -34,19 +49,10 @@ export const query = createAsyncThunk(
       error: null
     },
     reducers: {
-        addTodo(state,{payload}){
-            
-            const todo={
-                userId:uuid(),
-                id:uuid(),
-                title:payload.todo,
-                completed:false
-            }
-            state.todos.unshift(todo)
-        },
-        removeTodo(state,{payload}){
-          
-        }
+     removeTodoSync(state,{payload}){
+      const todoIdx=state.todos.findIndex(todo=>todo.id===payload)
+      state.todos.splice(todoIdx,1)
+     }
     },
     extraReducers: {
       [query.pending]: (state, action) => {
@@ -73,12 +79,18 @@ export const query = createAsyncThunk(
       },
       [getTodoById.fulfilled]:(state,{payload})=>{
         state.currTodo=payload
-
+      },
+      [addNewTodo.fulfilled]:(state,{payload})=>{
+      state.todos.unshift(payload)
+      },
+      [removeSelectedTodo.fulfilled]:(state)=>{
+        
       }
+  
     }
   })
 
-export const {addTodo,findTodo,removeTodo} =TodoSlice.actions
+export const {findTodo,removeTodoSync} =TodoSlice.actions
 
  export const todoList = state => state.todos.todos;
  export const currTodo = state => state.todos.currTodo;

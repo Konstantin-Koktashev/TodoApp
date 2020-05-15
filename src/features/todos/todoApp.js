@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import styles from './todoApp.module.css';
-import { query,getTodoById, todoList ,currTodo} from './todoSlice'
+import { query,getTodoById, todoList ,currTodo, removeSelectedTodo, removeTodoSync} from './todoSlice'
 import { AddTodoForm } from '../forms/UseNpmForm';
 import { SearchForm } from '../forms/SearchForm';
 
@@ -21,17 +21,24 @@ export default function  TodoApp () {
   const fetchAllTodos = async () => {
     try {
       const resultAction = await dispatch(query())
-      const toys = unwrapResult(resultAction)
-      return toys
+      // const toys = unwrapResult(resultAction)
+      // return toys
     } catch (err) {
 
     }
   }
-
-
-  const removeTodo=()=>{
+  const removeTodo=async (todoId)=>{
     
+    try {
+      await dispatch(removeSelectedTodo(todoId))
+      dispatch(removeTodoSync(todoId))
+    } catch (error) {
+      console.log(error)
+    }
   }
+
+
+
   useEffect(() => {
     fetchAllTodos()
     return () => {
@@ -46,10 +53,11 @@ export default function  TodoApp () {
   return (<div>
     <AddTodoForm></AddTodoForm>
     <SearchForm></SearchForm>
+ 
     <button onClick={() => fetchAllTodos()}>Fetch</button>
     {todos.map(todo=>{
       return(<div className={styles.todo} key={todo.id}>{todo.title}
-      <button onClick={removeTodo}>X</button></div>)
+      <button onClick={()=>removeTodo(todo.id)}>X</button></div>)
     })}
   </div>)
   // render UI here

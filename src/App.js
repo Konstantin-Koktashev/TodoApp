@@ -2,10 +2,16 @@ import React from 'react';
 
 import './App.css';
 import TodoApp from './features/todos/todoApp'
+import { Switch, Route } from 'react-router-dom';
+import TodoDetails from './features/todos/todoDetails';
 function App() {
   return (
     <div className="App">
-     <TodoApp></TodoApp>
+    <Switch>
+      <Route path='/' component={TodoApp}></Route>
+      <Route path='/:id' component={TodoDetails}></Route>
+    </Switch>
+     {/* <TodoApp></TodoApp> */}
     </div>
   );
 }
