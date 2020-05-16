@@ -9,7 +9,6 @@ export const query = createAsyncThunk(
       if (loading !== 'pending' || requestId !== currentRequestId) {
         return
       }
-      
       const response = await todoApi.getAllTodos()
       return response.data
     }
@@ -32,6 +31,7 @@ export const removeSelectedTodo = createAsyncThunk(
   export const getTodoById=createAsyncThunk(
     '/api/todos/id',
     async(id)=>{
+    console.log("id", id)
       const response = await todoApi.getTodoByID(id)
       return response.data
     }
@@ -52,6 +52,9 @@ export const removeSelectedTodo = createAsyncThunk(
      removeTodoSync(state,{payload}){
       const todoIdx=state.todos.findIndex(todo=>todo.id===payload)
       state.todos.splice(todoIdx,1)
+     },
+     setTodo(state,{payload}){
+       state.currTodo=state.todos.find(todo=>todo.id===payload)
      }
     },
     extraReducers: {
@@ -90,7 +93,7 @@ export const removeSelectedTodo = createAsyncThunk(
     }
   })
 
-export const {findTodo,removeTodoSync} =TodoSlice.actions
+export const {findTodo,removeTodoSync,setTodo} =TodoSlice.actions
 
  export const todoList = state => state.todos.todos;
  export const currTodo = state => state.todos.currTodo;

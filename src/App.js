@@ -8,8 +8,8 @@ function App() {
   return (
     <div className="App">
     <Switch>
-      <Route path='/' component={TodoApp}></Route>
       <Route path='/:id' component={TodoDetails}></Route>
+      <Route path='/' component={TodoApp}></Route>
     </Switch>
      {/* <TodoApp></TodoApp> */}
     </div>

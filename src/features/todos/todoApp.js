@@ -2,9 +2,10 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
 import { unwrapResult } from '@reduxjs/toolkit'
 import styles from './todoApp.module.css';
-import { query,getTodoById, todoList ,currTodo, removeSelectedTodo, removeTodoSync} from './todoSlice'
+import { setTodo,query, getTodoById, todoList, currTodo, removeSelectedTodo, removeTodoSync } from './todoSlice'
 import { AddTodoForm } from '../forms/UseNpmForm';
 import { SearchForm } from '../forms/SearchForm';
+import { NavLink } from 'react-router-dom';
 
 
 // export function TodoApp() {}
@@ -12,23 +13,21 @@ import { SearchForm } from '../forms/SearchForm';
 
 
 
-export default function  TodoApp () {
-  const  todos  = useSelector(todoList)
-  const  todo  = useSelector(currTodo)
+export default function TodoApp() {
+  const todos = useSelector(todoList)
+  const todo = useSelector(currTodo)
   const dispatch = useDispatch()
 
 
   const fetchAllTodos = async () => {
     try {
-      const resultAction = await dispatch(query())
-      // const toys = unwrapResult(resultAction)
-      // return toys
+       await dispatch(query())
     } catch (err) {
-
+      console.log(err)
     }
   }
-  const removeTodo=async (todoId)=>{
-    
+  const removeTodo = async (todoId) => {
+
     try {
       await dispatch(removeSelectedTodo(todoId))
       dispatch(removeTodoSync(todoId))
@@ -36,8 +35,11 @@ export default function  TodoApp () {
       console.log(error)
     }
   }
+  
 
-
+  const setCurrTodo=(todoId)=>{
+    dispatch(setTodo(todoId))
+  }
 
   useEffect(() => {
     fetchAllTodos()
@@ -46,18 +48,18 @@ export default function  TodoApp () {
     };
   }, [])
 
-  if(todo){
-    return(<article className={styles.todo}>{todo.title}</article>)
+  if (todo) {
+    return (<article className={styles.todo}>{todo.title}</article>)
   }
-  
+
   return (<div>
     <AddTodoForm></AddTodoForm>
     <SearchForm></SearchForm>
- 
+
     <button onClick={() => fetchAllTodos()}>Fetch</button>
-    {todos.map(todo=>{
-      return(<div className={styles.todo} key={todo.id}>{todo.title}
-      <button onClick={()=>removeTodo(todo.id)}>X</button></div>)
+    {todos.map(todo => {
+      return (<NavLink to={`${todo.id}`}  onClick={()=>{setCurrTodo(todo.id)}}className={styles.todo} key={todo.id}>{todo.title}
+        <button onClick={() => removeTodo(todo.id)}>X</button></NavLink>)
     })}
   </div>)
   // render UI here
